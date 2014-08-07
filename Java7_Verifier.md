@@ -24,7 +24,7 @@ Class File내 모든 메서드는 각자의 stack map을 가진다. 이 stack ma
 
 2. 또 한가지 문제는 컴파일 시 체크는 버전 왜곡의 문제가 있다. TradingClass의 자식 클래스읜 PurchaseStockOptions라는 클래스를 성공했다고 가정했을 경우 TradingClass의 정의가 정의가 변경되어 이전에 컴파일된 바이너리 클래스와 호환이 안될 수 있기 때문이라고 한다. 이에 대한 자세한 내용은 [Java Language Definition 문서](http://docs.oracle.com/javase/specs/jls/se7/html/jls-13.html)에 나와 있다. 
 
-**이러한 문제로 linking-time에 검증을 수행하며 이러한 검증은 interpreter의 성능을 향상시킨다고 한다. 그 이유는
+**이러한 문제로 linking-time에 검증을 수행하며 이러한 검증은 interpreter의 성능을 향상시킨다고 한다. 그 이유는**
 
 1. operand stack의 overflow나 underflow가 없음
 
@@ -44,7 +44,9 @@ Class File내 모든 메서드는 각자의 stack map을 가진다. 이 stack ma
 
 5. 오늘날 사용되는 거의 모든 어플리케이션은 ByteCode instrumentation 방식을 이용한다. Spring AOP, EclipseLink, JRebel, Chronon, YourKit, NewRelick과 같은 툴을 이용한다면 당신의 ByteCode는 컴파일 된 이후 변경될 것이다. 그렇다면 런타임에 stack map이 작성되어야 하는데 이 stack map은 4번에서 말한 컴파일러 디자이너가 아닌 개발자들에 의해서 비효율적이고 에러가 발생하기 쉬운 코드로 작성될 것이기 때문이다.
 
-* ByteCode Instrumentation : 이미 컴파일된 클래스의 ByteCode를 JVM이 로드하여 수행하기 이전 시점에 수정하는 것. ByteCode Injection이라고도 하며 CGLIB, ASM Framework등이 이러한 것을 지원해주는 툴들이다. AOP는 이러한 방식으로 어플리케이션 단면에 코드를 삽입한다.
+```
+ByteCode Instrumentation : 이미 컴파일된 클래스의 ByteCode를 JVM이 로드하여 수행하기 이전 시점에 수정하는 것. ByteCode Injection이라고도 하며 CGLIB, ASM Framework등이 이러한 것을 지원해주는 툴들이다. AOP는 이러한 방식으로 어플리케이션 단면에 코드를 삽입한다.
+```
 
 Prashant Deva는 stack map 도입은 결국 자바 에코시스템을 망치는 길이고 없어져야 한다고 주장한다. 그리고 stack map 이슈에 대한 해결책으로
 1. 항상 -XX:-UseSplitVerifier 옵션을 이용하여 이전 verifier를 이용하도록 한다. 실제도 chronon은 이 방식으로 stack map 이슈를 해결한다고 한다.
@@ -72,10 +74,8 @@ a.superclassMethod();
 	2. Bytecode 수정 도중에 class가 불러졌기 때문에 해당 클래스가 로드되었을 때 ByteCode instrumentor가 호출되지 않고 그 클래스의 Bytecode를 수정할 수 없다.
 	3. 부모클래스와 자식클래스가 다른 클래스로더를 사용하여 ClassNotFoundException이 발생하기 쉽다.
 	4. 이것을 실제로 구현하기 위해서는 데이터 흐름 분석에 전문가가 되어야 한다.
-
-* static class initializer가 사용되는 시점 (http://docs.oracle.com/javase/specs/jls/se7/html/jls-12.html#jls-12.4.1)
-
-*
+'''
+[static class initializer가 사용되는 시점](http://docs.oracle.com/javase/specs/jls/se7/html/jls-12.html#jls-12.4.1)
 1. 클래스의 인스턴스가 생성될 때
 2. 클래스의 static 메서드가 수행될 때
 3. class의 static 필드가 할당될 때
@@ -83,12 +83,14 @@ a.superclassMethod();
 5. Top Level 클래스에 포함된 assert 구문이 수행될 때
 6. Class.forName() 이 호출될 때 
 
-본문에서 말한 static class initializer가 로드되는 경우는 6번의 경우를 말한다.
+* 본문에서 말한 static class initializer가 로드되는 경우는 6번의 경우를 말한다.
+* Top Level Class는 Nested Class가 아닌 것을 말한다.
+'''
 
-** Top Level Class는 Nested Class가 아닌 것을 말한다.
-
-* ByteCode Instrumentor는 Java의 main() 메서드가 실행되기 이전에 premain() 메서드로 호출된다. 그렇기 때문에 이미 main() 메서드가 실행 중인 런타임 시점에서 다시 instrumentor를 호출할 수 없다.
-해당 내용(http://docs.oracle.com/javase/7/docs/api/java/lang/instrument/package-summary.html)
+```
+ByteCode Instrumentor는 Java의 main() 메서드가 실행되기 이전에 premain() 메서드로 호출된다. 그렇기 때문에 이미 main() 메서드가 실행 중인 런타임 시점에서 다시 instrumentor를 호출할 수 없다.
+[instrument API doc](http://docs.oracle.com/javase/7/docs/api/java/lang/instrument/package-summary.html)
+```
 
 ###데이터 흐름 분석이 얼마나 복잡한가?
 이에 대해서 Prashant Deva는 다음과 같이 말한다.
