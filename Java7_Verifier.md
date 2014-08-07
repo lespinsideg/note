@@ -35,7 +35,7 @@ Class File내 모든 메서드는 각자의 stack map을 가진다. 이 stack ma
 
 3. 모든 ByteCode 명령의 인자가 올바른 타입을 사용함
 
-을 linking-time에 이미 보장함
+을 linking-time에 이미 보장
 
 ####Prashant Deva의 반론
 
@@ -61,9 +61,9 @@ Prashant Deva는 stack map 도입은 결국 자바 에코시스템을 망치는 
 3. 오라클이 Java 8에서 stack map을 다시 optional로 변경하도록 탄원한다. 
 라고 했지만 글 마지막에 [오라클은 결국 -XX:-UseSplitVerifier 사용을 deprecated 해버렸다](http://bugs.java.com/view_bug.do?bug_id=8009595)고 나와있다. deprecated하는 이유는 WLS Group(WebLogic Server Group)이 더이상 해당 옵션을 사용하지 않기 때문이라고.. 
 
-이전 Verifier 사용에 대해서는 Java SE 7 JVM 문서에도 나와있는데 stack frame 도입으로 Class File을 조작하는 툴들은 stack frame을 구현해야 하지만 구현에 시간이 필요하기 때문에 JVM에서 이전 verifier를 이용할 수 있도록 한시적으로 허용한다라고 적혀있다.들
+이전 Verifier 사용에 대해서는 Java SE 7 JVM 문서에도 나와있는데 stack frame 도입으로 Class File을 조작하는 툴들은 stack frame을 구현해야 하지만 구현에 시간이 필요하기 때문에 JVM에서 이전 verifier를 이용할 수 있도록 한시적으로 허용한다라고 적혀있다.
 
-####그렇다면 정말 stack map을 작성하는 것이 복잡한가?용
+####그렇다면 정말 stack map을 작성하는 것이 복잡한가?
 
 여기에 대해서 Prashant Deva는 다음과 같은 예를 들었다.
 
