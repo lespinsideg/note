@@ -27,7 +27,7 @@ Class File내 모든 메서드는 각자의 stack map을 가진다. 이 stack ma
 
 2. 또 한가지 문제는 컴파일 시 체크는 버전 왜곡의 문제가 있다. TradingClass의 자식 클래스읜 PurchaseStockOptions라는 클래스를 성공했다고 가정했을 경우 TradingClass의 정의가 정의가 변경되어 이전에 컴파일된 바이너리 클래스와 호환이 안될 수 있기 때문이라고 한다. 이에 대한 자세한 내용은 [Java Language Definition 문서](http://docs.oracle.com/javase/specs/jls/se7/html/jls-13.html)에 나와 있다. 
 
-**이러한 문제로 linking-time에 검증을 수행하며 이러한 검증은 interpreter의 성능을 향상시킨다고 한다. 그 이유는**
+####linking-time에 검증으로 interpreter 성능 향상?
 
 1. operand stack의 overflow나 underflow가 없음
 
@@ -35,7 +35,9 @@ Class File내 모든 메서드는 각자의 stack map을 가진다. 이 stack ma
 
 3. 모든 ByteCode 명령의 인자가 올바른 타입을 사용함
 
-**하지만 Prashant Deva는 여기에 대해서 오라클의 이런 주장은 소똥(Bullshit) 이라고 반론한다.**
+을 linking-time에 이미 보장함
+
+####Prashant Deva의 반론
 
 1. Verifier의 경우 JVM option을 통해 통째로 끌 수 있지만 대부분의 사람들이 그렇게 이용하지 않는 이유는 성능에 영향을 거의 미치지 않기 때문이다. Verifier는 클래스가 로드되는 시점에 한번 수행되는데 이 시점에서 사용되는 시간의 대부분은 IO에 있는 것이지 verifier 수행에 있는 것이 아니기 때문이다.
 
@@ -51,13 +53,18 @@ Class File내 모든 메서드는 각자의 stack map을 가진다. 이 stack ma
 ByteCode Injection이라고도 하며 CGLIB, ASM Framework등이 이러한 것을 지원해주는 툴들이다. AOP는 이러한 방식으로 어플리케이션 단면에 코드를 삽입한다.*
 
 Prashant Deva는 stack map 도입은 결국 자바 에코시스템을 망치는 길이고 없어져야 한다고 주장한다. 그리고 stack map 이슈에 대한 해결책으로
+
 1. 항상 -XX:-UseSplitVerifier 옵션을 이용하여 이전 verifier를 이용하도록 한다. 실제도 chronon은 이 방식으로 stack map 이슈를 해결한다고 한다.
+
+2. ASM Framework는 런타임에 타입 계층구조를 찾지 않도록 알고리즘을 바꿔야한다.
+
 3. 오라클이 Java 8에서 stack map을 다시 optional로 변경하도록 탄원한다. 
 라고 했지만 글 마지막에 [오라클은 결국 -XX:-UseSplitVerifier 사용을 deprecated 해버렸다](http://bugs.java.com/view_bug.do?bug_id=8009595)고 나와있다. deprecated하는 이유는 WLS Group(WebLogic Server Group)이 더이상 해당 옵션을 사용하지 않기 때문이라고.. 
 
 이전 Verifier 사용에 대해서는 Java SE 7 JVM 문서에도 나와있는데 stack frame 도입으로 Class File을 조작하는 툴들은 stack frame을 구현해야 하지만 구현에 시간이 필요하기 때문에 JVM에서 이전 verifier를 이용할 수 있도록 한시적으로 허용한다라고 적혀있다.들
 
-####그렇다면 정말 stack map을 작성하는 것이 복잡한가?
+####그렇다면 정말 stack map을 작성하는 것이 복잡한가?용
+
 여기에 대해서 Prashant Deva는 다음과 같은 예를 들었다.
 
 ```java
